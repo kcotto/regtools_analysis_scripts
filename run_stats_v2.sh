@@ -17,10 +17,12 @@ for c in ${cohorts[@]}; do
 	done
 	cd ..
 	ls samples/ > dir_names.tsv
+	for i in samples/*/; do
+		rm ${i}/all_variants_sorted.vcf
+		spliceai -I ${i}/master_trimmed.vcf -O ${i}/master_trimmed_spliceai.vcf -R /data/GRCh38.d1.vd1.fa -A grch38
+	done		
 	for k in ${tags[@]}; do
 		for i in samples/*/; do
-			rm ${i}/all_variants_sorted.vcf
-			spliceai -I ${i}/master_trimmed.vcf -O ${i}/master_trimmed_spliceai.vcf -R /data/GRCh38.d1.vd1.fa -A grch38
 			bash /data/variants.sh ${i}/cse_identify_filtered_${k}.tsv ${i}/variants_${k}.bed
 		done
 		echo -e 'chrom\tstart\tend\tsamples' > all_splicing_variants_${k}.bed
