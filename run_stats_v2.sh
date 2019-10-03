@@ -1,8 +1,8 @@
 
 tags=(E I default i50e5)
-#cohorts=(CHOL DLBC UCS)
+cohorts=(CHOL)
 #cohorts=(CHOL DLBC UCS KICH MESO UVM ACC SKCM THYM GBM READ TGCT ESCA PAAD PCPG SARC OV KIRP CESC KIRC LIHC STAD BLCA COAD PRAD THCA LUSC HNSC LGG LUAD UCEC BRCA)
-cohorts=(SKCM THYM GBM READ TGCT ESCA PAAD OV CESC LIHC STAD BLCA COAD PRAD THCA LUSC HNSC LGG LUAD UCEC BRCA)
+#cohorts=(SKCM THYM GBM READ TGCT ESCA PAAD OV CESC LIHC STAD BLCA COAD PRAD THCA LUSC HNSC LGG LUAD UCEC BRCA)
 
 for c in ${cohorts[@]}; do
 	mkdir -p ${c}/samples/
@@ -29,11 +29,7 @@ for c in ${cohorts[@]}; do
 		for i in samples/TCGA*/; do
 			j=${i##samples/}
 			uniq ${i}/variants_${k}.bed | awk '{split($0, a, ","); if (length(a[2]) != 0) print a[1]"\n"a[2]; else print a[1]}' | awk -v var=${j%%/} '{print $0 "\t" var}' >> all_splicing_variants_${k}.bed
-			#uniq ${i}/variants_${k}.bed | awk -v var=${j%%/} '{print $0 "\t" var}' >> all_splicing_variants_${k}.bed
-			#Rscript --vanilla /data/compare_junctions_hist.R ${k}
 		done
-		# aws s3 cp compare_junctions/ s3://regtools-results-unstranded/${c}/compare_junctions/ --recursive
-		# rm -rf compare_junctions/hist/junction_pvalues_$tag.tsv
 	done
 	Rscript --vanilla /data/compare_junctions_hist_default.R
 	Rscript --vanilla /data/compare_junctions_hist_i50e5.R
@@ -41,6 +37,10 @@ for c in ${cohorts[@]}; do
 	Rscript --vanilla /data/compare_junctions_hist_I.R
 	for i in all_*; do
 		aws s3 cp ${i} s3://regtools-results-unstranded/${c}/
+	done
+	for i in samples/*/; do
+		tar -czf ${i}.tar.gz ${i}
+		# aws s3 cp ${i}.tar.gz s3://regtools-results-unstranded/${c}/
 	done
 	aws s3 cp compare_junctions/ s3://regtools-results-unstranded/${c}/compare_junctions/ --recursive
 	cd ..
