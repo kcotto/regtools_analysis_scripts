@@ -40,7 +40,7 @@ for c in ${cohorts[@]}; do
 	done
 	for i in samples/*/; do
 		tar -czf ${i}.tar.gz ${i}
-		echo 'aws s3 cp ${i}.tar.gz s3://regtools-results-unstranded/${c}/'
+		printf 'aws s3 cp ${i}.tar.gz s3://regtools-results-unstranded/${c}/'
 	done
 	aws s3 cp compare_junctions/ s3://regtools-results-unstranded/${c}/compare_junctions/ --recursive
 	cd ..
