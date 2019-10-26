@@ -16,11 +16,11 @@ for c in ${cohorts[@]}; do
 	cd ..
 	ls samples/ > dir_names.tsv		
 	for k in ${tags[@]}; do
-		for i in samples/*/; do
+		for i in samples/TCGA*; do
 			bash /data/variants.sh ${i}/cse_identify_filtered_${k}.tsv ${i}/variants_${k}.bed
 		done
 		echo -e 'chrom\tstart\tend\tsamples' > all_splicing_variants_${k}.bed
-		for i in samples/TCGA*/; do
+		for i in samples/TCGA*; do
 			j=${i##samples/}
 			uniq ${i}/variants_${k}.bed | awk '{split($0, a, ","); if (length(a[2]) != 0) print a[1]"\n"a[2]; else print a[1]}' | awk -v var=${j%%/} '{print $0 "\t" var}' >> all_splicing_variants_${k}.bed
 		done
@@ -36,7 +36,7 @@ for c in ${cohorts[@]}; do
 	for i in all_*; do
 		aws s3 cp ${i} s3://regtools-results-unstranded/${c}/
 	done
-	for i in samples/*/; do
+	for i in samples/*; do
 		tar -czf ${i}.tar.gz ${i}
 		printf 'aws s3 cp ${i}.tar.gz s3://regtools-results-unstranded/${c}/'
 	done
