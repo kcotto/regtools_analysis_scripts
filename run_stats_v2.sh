@@ -12,15 +12,9 @@ for c in ${cohorts[@]}; do
 	for t in *.gz; do
 		tar xzf ${t}
 		rm ${t}
-		rm -rf all*
-		rm -rf compare_junctions
 	done
 	cd ..
-	ls samples/ > dir_names.tsv
-	for i in samples/*/; do
-		rm -f ${i}/all_variants_sorted.vcf
-		spliceai -I ${i}/master_trimmed.vcf -O ${i}/master_trimmed_spliceai.vcf -R /data/GRCh38.d1.vd1.fa -A grch38
-	done		
+	ls samples/ > dir_names.tsv		
 	for k in ${tags[@]}; do
 		for i in samples/*/; do
 			bash /data/variants.sh ${i}/cse_identify_filtered_${k}.tsv ${i}/variants_${k}.bed
@@ -31,10 +25,14 @@ for c in ${cohorts[@]}; do
 			uniq ${i}/variants_${k}.bed | awk '{split($0, a, ","); if (length(a[2]) != 0) print a[1]"\n"a[2]; else print a[1]}' | awk -v var=${j%%/} '{print $0 "\t" var}' >> all_splicing_variants_${k}.bed
 		done
 	done
-	Rscript --vanilla /data/compare_junctions_hist_default.R
-	Rscript --vanilla /data/compare_junctions_hist_i50e5.R
-	Rscript --vanilla /data/compare_junctions_hist_E.R
-	Rscript --vanilla /data/compare_junctions_hist_I.R
+	Rscript --vanilla /home/ec2-user/regtools/scripts/compare_junctions_hist.R default
+	Rscript --vanilla /home/ec2-user/regtools/scripts/compare_junctions_hist.R i50e5
+	Rscript --vanilla /home/ec2-user/regtools/scripts/compare_junctions_hist.R E
+	Rscript --vanilla /home/ec2-user/regtools/scripts/compare_junctions_hist.R I
+	Rscript --vanilla /home/ec2-user/regtools/scripts/filter_and_BH.R default
+	Rscript --vanilla /home/ec2-user/regtools/scripts/filter_and_BH.R i50e5
+	Rscript --vanilla /home/ec2-user/regtools/scripts/filter_and_BH.R E
+	Rscript --vanilla /home/ec2-user/regtools/scripts/filter_and_BH.R I	
 	for i in all_*; do
 		aws s3 cp ${i} s3://regtools-results-unstranded/${c}/
 	done
