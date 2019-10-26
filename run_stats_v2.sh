@@ -12,6 +12,8 @@ for c in ${cohorts[@]}; do
 	for t in *.gz; do
 		tar xzf ${t}
 		rm ${t}
+		rm -rf all*	
+		rm -rf compare_junctions
 	done
 	cd ..
 	ls samples/ > dir_names.tsv		
