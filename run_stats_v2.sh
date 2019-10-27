@@ -1,8 +1,7 @@
 
 tags=(E I default i50e5)
-cohorts=(CHOL)
-#cohorts=(CHOL DLBC UCS KICH MESO UVM ACC SKCM THYM GBM READ TGCT ESCA PAAD PCPG SARC OV KIRP CESC KIRC LIHC STAD BLCA COAD PRAD THCA LUSC HNSC LGG LUAD UCEC BRCA)
-#cohorts=(SKCM THYM GBM READ TGCT ESCA PAAD OV CESC LIHC STAD BLCA COAD PRAD THCA LUSC HNSC LGG LUAD UCEC BRCA)
+# cohorts=(CHOL)
+cohorts=(DLBC UCS KICH MESO UVM ACC SKCM THYM GBM READ TGCT ESCA PAAD PCPG SARC OV KIRP CESC KIRC LIHC STAD BLCA COAD PRAD THCA LUSC HNSC LGG LUAD UCEC BRCA)
 
 for c in ${cohorts[@]}; do
 	mkdir -p ${c}/samples/
@@ -38,10 +37,12 @@ for c in ${cohorts[@]}; do
 	for i in all_*; do
 		aws s3 cp ${i} s3://regtools-results-unstranded/${c}/
 	done
-	for i in samples/*; do
+	cd samples/
+	for i in *; do
 		tar -czf ${i}.tar.gz ${i}
-		printf 'aws s3 cp ${i}.tar.gz s3://regtools-results-unstranded/${c}/'
+		aws s3 cp ${i}.tar.gz s3://regtools-results-unstranded/${c}/
 	done
+	cd ..
 	aws s3 cp compare_junctions/ s3://regtools-results-unstranded/${c}/compare_junctions/ --recursive
 	cd ..
 	rm -rf ${c}*
