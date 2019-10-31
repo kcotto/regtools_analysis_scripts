@@ -8,10 +8,20 @@ import requests
 import shutil
 import json
 from pathlib import Path
+import argparse
 
 uid = os.getuid()
 gid = os.getgid()
 cwd = os.getcwd()
+
+
+input_parser = argparse.ArgumentParser(
+    description="Create IGV sessions for TCGA data",
+)
+input_parser.add_argument(
+    'yaml file',
+    help="Yaml file with inputs",
+)
 
 
 def run(cmd):
