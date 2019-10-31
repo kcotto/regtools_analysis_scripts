@@ -166,9 +166,7 @@ sqs = SQSWrapper('default')
 
 try:
     logger.info('Waiting for work item')
-    # for sample_id in sqs.work_items():
-    while True:
-        sample_id = 'BLCA;TCGA-2F-A9KQ-01A'
+    for sample_id in sqs.work_items():
         filesystem_path = 'regtools_wd_' + sample_id.split(';')[1]
         try:
             workflow = RegtoolsWorkflow(sample_id=sample_id,
