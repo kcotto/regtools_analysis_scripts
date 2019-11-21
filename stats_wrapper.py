@@ -29,7 +29,8 @@ for tag in tags:
         subprocess.run(f'Rscript --vanilla /home/ec2-user/workspace/data/compare_junctions_hist_v2.R {tag} {file}', shell=True, check=True)
         count += 1
     if len(files) > 1:
-        subprocess.run('awk "FNR==1 && NR!=1 { while (/^<header>/) getline; \} 1 {print} " *out.tsv > junction_pvalues.tsv', shell=True, check=True)
+        subprocess.run('head -n1 small_file_50000.txt', shell=True, check=True)
+        subprocess.run('for fname in *.txt; do tail -n+2 $fname >> combined.txt; done', shell=True, check=True)
         output_file = f'compare_junctions/hist/junctions_pvalues_{tag}.tsv'
         if os.path.exists(output_file):
             os.remove(output_file)
