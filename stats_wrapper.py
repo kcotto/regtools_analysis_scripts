@@ -23,6 +23,6 @@ for tag in tags:
     files = glob.glob('small_file_*')
     for file in files:
         subprocess.run(f'Rscript --vanilla /home/ec2-user/workspace/data/compare_junctions_hist_v2.R {tag} {file}')
-    subprocess.run('awk "FNR==1 && NR!=1 { while (/^<header>/) getline; \} 1 {print} " small_file*.txt > junction_pvalues.tsv')
+    subprocess.run('awk "FNR==1 && NR!=1 { while (/^<header>/) getline; \} 1 {print} " *out.tsv > junction_pvalues.tsv')
     os.remove('junctions_pvalues.tsv', f'junctions_pvalues_{tag}.tsv')
     os.remove('small_file*')
