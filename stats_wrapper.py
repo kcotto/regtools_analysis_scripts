@@ -31,8 +31,8 @@ for tag in tags:
         count += 1
     output_file = f'compare_junctions/hist/junctions_pvalues_{tag}.tsv'
     if len(files) > 1:
-        subprocess.run(f'head -n1 small_file_{lines_per_file}.txt_out.tsv > junctions_pvalues', shell=True, check=True)
-        subprocess.run('for fname in *.txt_out.tsv; do tail -n+2 $fname >> junctions_pvalues; done', shell=True, check=True)
+        subprocess.run(f'head -n1 small_file_{lines_per_file}.txt_out.tsv > junctions_pvalues.tsv', shell=True, check=True)
+        subprocess.run('for fname in *.txt_out.tsv; do tail -n+2 $fname >> junctions_pvalues.tsv; done', shell=True, check=True)
         if os.path.exists(output_file):
             os.remove(output_file)
         os.rename('junctions_pvalues.tsv', output_file)
