@@ -9,7 +9,7 @@ cwd = os.getcwd()
 for tag in tags:
     lines_per_file = 50000
     smallfile = None
-    input_file = f'all_splicing_variants_{tag}.tsv'
+    input_file = f'all_splicing_variants_{tag}.bed'
     with open(input_file, 'r') as bigfile:
         for lineno, line in enumerate(bigfile):
             if lineno % lines_per_file == 0:
@@ -22,7 +22,7 @@ for tag in tags:
             smallfile.close()
     #get chunks
     files = glob.glob('small_file_*')
-    print(f'{len(files)} chunks created')
+    print(f'{len(files)} chunk(s) created')
     count = 1
     for file in files:
         print(f'Starting to run file chunk {count}')
