@@ -24,5 +24,5 @@ for tag in tags:
     for file in files:
         subprocess.run(f'Rscript --vanilla /home/ec2-user/workspace/data/compare_junctions_hist_v2.R {tag} {file}')
     subprocess.run('awk "FNR==1 && NR!=1 { while (/^<header>/) getline; \} 1 {print} " *out.tsv > junction_pvalues.tsv')
-    os.remove('junctions_pvalues.tsv', f'junctions_pvalues_{tag}.tsv')
+    os.rename('junctions_pvalues.tsv', f'junctions_pvalues_{tag}.tsv')
     os.remove('small_file*')
