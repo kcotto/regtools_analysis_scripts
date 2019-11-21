@@ -2,7 +2,7 @@ import glob
 import subprocess
 import os
 
-tags = ['default', 'i50e5', 'E', 'I']
+tags = ['default', 'I']
 cwd = os.getcwd()
 
 
