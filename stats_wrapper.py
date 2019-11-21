@@ -30,7 +30,7 @@ for tag in tags:
         count += 1
     if len(files) > 1:
         subprocess.run('head -n1 small_file_50000.txt', shell=True, check=True)
-        subprocess.run('for fname in *.txt; do tail -n+2 $fname >> combined.txt; done', shell=True, check=True)
+        subprocess.run('for fname in *.txt; do tail -n+2 $fname >> junctions_pvalues; done', shell=True, check=True)
         output_file = f'compare_junctions/hist/junctions_pvalues_{tag}.tsv'
         if os.path.exists(output_file):
             os.remove(output_file)
