@@ -30,12 +30,13 @@ for tag in tags:
         subprocess.run(f'Rscript --vanilla /home/ec2-user/workspace/data/compare_junctions_hist_v2.R {tag} {file}', shell=True, check=True)
         count += 1
     output_file = f'compare_junctions/hist/junctions_pvalues_{tag}.tsv'
+    junction_tmp_file = 'junction_pvalues.tsv'
     if len(files) > 1:
-        subprocess.run(f'head -n1 small_file_{lines_per_file}.txt_out.tsv > junctions_pvalues.tsv', shell=True, check=True)
-        subprocess.run('for fname in *.txt_out.tsv; do tail -n+2 $fname >> junctions_pvalues.tsv; done', shell=True, check=True)
+        subprocess.run(f'head -n1 small_file_{lines_per_file}.txt_out.tsv > {junction_tmp_file}', shell=True, check=True)
+        subprocess.run(f'for fname in *.txt_out.tsv; do tail -n+2 $fname >> {junction_tmp_file}; done', shell=True, check=True)
         if os.path.exists(output_file):
             os.remove(output_file)
-        os.rename('junctions_pvalues.tsv', output_file)
+        os.rename(junction_tmp_file, output_file)
     else:
         tmp_file = glob.glob('*.txt_out.tsv')[0]
         if os.path.exists(output_file):
