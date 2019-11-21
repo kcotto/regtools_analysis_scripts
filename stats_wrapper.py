@@ -41,4 +41,4 @@ for tag in tags:
         if os.path.exists(output_file):
             os.remove(output_file)
         os.rename(tmp_file, output_file)
-    os.remove('small_file*')
+    subprocess.run('rm -rf small_file*', shell=True, check=True)
