@@ -30,8 +30,13 @@ for tag in tags:
         count += 1
     if len(files) > 1:
         subprocess.run('awk "FNR==1 && NR!=1 { while (/^<header>/) getline; \} 1 {print} " *out.tsv > junction_pvalues.tsv', shell=True, check=True)
-        os.rename('junctions_pvalues.tsv', f'compare_junctions/hist/junctions_pvalues_{tag}.tsv')
+        output_file = f'compare_junctions/hist/junctions_pvalues_{tag}.tsv'
+        if os.path.exists(output_file):
+            os.remove(output_file)
+        os.rename('junctions_pvalues.tsv', output_file)
     else:
         tmp_file = glob.glob('*out.tsv')[0]
-        os.rename(tmp_file, f'compare_junctions/hist/junctions_pvalues_{tag}.tsv')
+        if os.path.exists(output_file):
+            os.remove(output_file)
+        os.rename(tmp_file, output_file)
     os.remove('small_file*')
