@@ -37,7 +37,7 @@ for tag in tags:
             os.remove(output_file)
         os.rename('junctions_pvalues.tsv', output_file)
     else:
-        tmp_file = glob.glob('*out.tsv')[0]
+        tmp_file = glob.glob('*.txt_out.tsv')[0]
         if os.path.exists(output_file):
             os.remove(output_file)
         os.rename(tmp_file, output_file)
