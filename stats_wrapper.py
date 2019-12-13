@@ -7,39 +7,39 @@ cwd = os.getcwd()
 
 
 for tag in tags:
-    print(f'Working on {tag} tag')
-    lines_per_file = 50000
-    smallfile = None
+    target_lines_per_file = 250
+    lines_per_file = 0
     input_file = f'all_splicing_variants_{tag}.bed'
-    with open(input_file, 'r') as bigfile:
-        for lineno, line in enumerate(bigfile):
-            if lineno % lines_per_file == 0:
-                if smallfile:
-                    smallfile.close()
-                small_filename = 'small_file_{}.txt'.format(lineno + lines_per_file)
-                smallfile = open(small_filename, "w")
-            smallfile.write(line)
-        if smallfile:
-            smallfile.close()
-    #get chunks
-    files = glob.glob('small_file_*')
-    print(f'{len(files)} chunk(s) created')
-    count = 1
-    for file in files:
-        print(f'Starting to run file chunk {count}')
-        subprocess.run(f'Rscript --vanilla /home/ec2-user/workspace/data/compare_junctions_hist_v2.R {tag} {file}', shell=True, check=True)
-        count += 1
-    output_file = f'compare_junctions/hist/junctions_pvalues_{tag}.tsv'
-    junction_tmp_file = 'junction_pvalues.tsv'
-    if len(files) > 1:
-        subprocess.run(f'head -n1 small_file_{lines_per_file}.txt_out.tsv > {junction_tmp_file}', shell=True, check=True)
-        subprocess.run(f'for fname in *.txt_out.tsv; do tail -n+2 $fname >> {junction_tmp_file}; done', shell=True, check=True)
-        if os.path.exists(output_file):
-            os.remove(output_file)
-        os.rename(junction_tmp_file, output_file)
+    lines = open(input_file).readlines()
+    count = len(lines)
+    if count <= lines_per_file:
+        subprocess.run(f'Rscript --vanilla /home/ec2-user/workspace/data/compare_junctions_hist_v2.R {tag} {input_file}')
     else:
-        tmp_file = glob.glob('*.txt_out.tsv')[0]
-        if os.path.exists(output_file):
-            os.remove(output_file)
-        os.rename(tmp_file, output_file)
-    subprocess.run('rm -rf small_file*', shell=True, check=True)
+        header = lines[0]
+        lines.pop(0)
+        lines.sort()
+        filenum = 1
+        small_filename = f'small_file_{filenum}.txt'
+        smallfile = open(small_filename, "w")
+        smallfile.write(header)
+        lines_per_file += target_lines_per_file
+        for lineno, line in enumerate(lines):
+            smallfile.write(line)
+            if lineno >= lines_per_file:
+                fields1 = line.split('\t')
+                variant1 = f'{fields1[0]}_{fields1[1]}_{fields1[2]}'
+                fields2 = lines[lineno+1].split('\t')
+                variant2 = f'{fields2[0]}_{fields2[1]}_{fields2[2]}'
+                if variant1 != variant2:
+                    smallfile.close()
+                    filenum += 1
+                    small_filename = f'small_file_{filenum}.txt'
+                    smallfile = open(small_filename, "w")
+                    smallfile.write(header)
+                    lines_per_file += target_lines_per_file
+    # get chunks
+    files = glob.glob('small_file_*')
+    for file in files:
+        subprocess.run(f'Rscript --vanilla /home/ec2-user/workspace/data/compare_junctions_hist_v2.R {tag} {file}')
+    subprocess.run(f"awk 'FNR==1 && NR!=1 { while (/^<header>/) getline; } 1 {print} ' small_file*.txt > junction_pvalues_{tag}.tsv")
+    os.remove('small_file*')
