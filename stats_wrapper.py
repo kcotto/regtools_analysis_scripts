@@ -7,7 +7,7 @@ cwd = os.getcwd()
 
 
 for tag in tags:
-    target_lines_per_file = 250
+    target_lines_per_file = 75000
     lines_per_file = 0
     input_file = f'all_splicing_variants_{tag}.bed'
     lines = open(input_file).readlines()
