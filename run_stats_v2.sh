@@ -26,14 +26,14 @@ for c in ${cohorts[@]}; do
 			uniq ${i}/variants_${k}.bed | awk '{split($0, a, ","); if (length(a[2]) != 0) print a[1]"\n"a[2]; else print a[1]}' | awk -v var=${j%%/} '{print $0 "\t" var}' >> all_splicing_variants_${k}.bed
 		done
 	done
-	python3 /home/ec2-user/workspace/regtools/scripts/stats_wrapper.py default
-        python3 /home/ec2-user/workspace/regtools/scripts/stats_wrapper.py i50e5
-        python3 /home/ec2-user/workspace/regtools/scripts/stats_wrapper.py E
-        python3 /home/ec2-user/workspace/regtools/scripts/stats_wrapper.py I
-	Rscript --vanilla /home/ec2-user/workspace/regtools/scripts/filter_and_BH.R default
-	Rscript --vanilla /home/ec2-user/workspace/regtools/scripts/filter_and_BH.R i50e5
-	Rscript --vanilla /home/ec2-user/workspace/regtools/scripts/filter_and_BH.R E
-	Rscript --vanilla /home/ec2-user/workspace/regtools/scripts/filter_and_BH.R I
+	python3 /home/ubuntu/workspace/regtools/scripts/stats_wrapper.py default
+        python3 /home/ubuntu/workspace/regtools/scripts/stats_wrapper.py i50e5
+        python3 /home/ubuntu/workspace/regtools/scripts/stats_wrapper.py E
+        python3 /home/ubuntu/workspace/regtools/scripts/stats_wrapper.py I
+	Rscript --vanilla /home/ubuntu/workspace/regtools/scripts/filter_and_BH.R default
+	Rscript --vanilla /home/ubuntu/workspace/regtools/scripts/filter_and_BH.R i50e5
+	Rscript --vanilla /home/ubuntu/workspace/regtools/scripts/filter_and_BH.R E
+	Rscript --vanilla /home/ubuntu/workspace/regtools/scripts/filter_and_BH.R I
 	for i in all_*; do
 		aws s3 cp ${i} s3://regtools-results-unstranded/${c}/
 	done
