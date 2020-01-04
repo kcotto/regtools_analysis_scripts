@@ -26,6 +26,7 @@ for c in ${cohorts[@]}; do
 			uniq ${i}/variants_${k}.bed | awk '{split($0, a, ","); if (length(a[2]) != 0) print a[1]"\n"a[2]; else print a[1]}' | awk -v var=${j%%/} '{print $0 "\t" var}' >> all_splicing_variants_${k}.bed
 		done
 	done
+	wc -l *.bed
 	time python3 /home/ec2-user/workspace/regtools/scripts/stats_wrapper.py default
         time python3 /home/ec2-user/workspace/regtools/scripts/stats_wrapper.py i50e5
         time python3 /home/ec2-user/workspace/regtools/scripts/stats_wrapper.py E
