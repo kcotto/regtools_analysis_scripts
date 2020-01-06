@@ -90,7 +90,7 @@ class RegtoolsWorkflow:
             check=True)
         subprocess.run(f'tar xzf {self.sample}.tar.gz {self.sample}/{self.sample}_master.vcf', shell=True, check=True)
         os.remove(f'{self.sample}.tar.gz')
-        subprocess.run(f'mv {self.sample}/*.vcf vep_data/')
+        subprocess.run(f'mv {self.sample}/*.vcf vep_data/', shell=True, check=True)
         self.run_docker_image_as_current_user(
             f'ensemblorg/ensembl-vep ./vep --input_file=/opt/vep/.vep/{self.sample_id}.vcf --output_file=/opt/vep/.vep/{self.sample_id}_master.vep.vcf --vcf --everything --cache --dir_cache=/opt/vep/.vep/vep/  --force_overwrite --per_gene --format=vcf --assembly=GRCh38 --offline  --fasta=/opt/vep/.vep/GRCh38.d1.vd1.fa')
         subprocess.run(
