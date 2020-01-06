@@ -112,7 +112,7 @@ stream_handler.setFormatter(log_formatter)
 stream_handler.setLevel(logging.DEBUG)
 logger.addHandler(stream_handler)
 
-sqs = SQSWrapper('default')
+sqs = SQSWrapper('default', 'vep')
 
 try:
     logger.info('Waiting for work item')
