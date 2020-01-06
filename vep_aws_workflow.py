@@ -99,9 +99,9 @@ class RegtoolsWorkflow:
             shell=True,
             check=True)
         shutil.rmtree(f'{self.sample}/')
-        files_to_remove_from_vep = glob.glob('vep_data/*.vcf')
-        for file in files_to_remove_from_vep:
-            os.remove(file)
+        os.remove(f'vep_data/{self.sample}_master.vep.vcf')
+        os.remove(f'vep_data/{self.sample}_master.vep.vcf_summary.html')
+
 
 
 logger = logging.getLogger('regtools_reader')
@@ -156,7 +156,7 @@ try:
             file_handler.close()
             logger.removeHandler(file_handler)
             logger.info('Cleaning up scratch directory')
-            # workflow.cleanup()
+            workflow.cleanup()
             logger.info(f'Closed log file "{sample_id}.log"')
             logger.info('Waiting for work item')
 except KeyboardInterrupt:
