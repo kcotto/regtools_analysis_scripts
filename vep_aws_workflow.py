@@ -79,7 +79,7 @@ class RegtoolsWorkflow:
     def run_docker_image_as_current_user(self, image_name_and_all_args: str, stdout=None):
         docker_args = image_name_and_all_args.split()
         self.logger.info(f'Running docker container command "{docker_args[0]} {docker_args[1]}"')
-        subprocess.run(f'docker run --user {self.uid}:{self.gid} -v /workspace/vep_data:/opt/vep/.vep:Z {image_name_and_all_args}',
+        subprocess.run(f'docker run --user {self.uid}:{self.gid} -v /vep_data:/opt/vep/.vep:Z {image_name_and_all_args}',
                        shell=True, check=True, stdout=stdout)
 
     def download_from_s3_and_run_vep(self):
