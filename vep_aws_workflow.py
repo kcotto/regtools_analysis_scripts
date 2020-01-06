@@ -94,7 +94,7 @@ class RegtoolsWorkflow:
         self.run_docker_image_as_current_user(
             f'ensemblorg/ensembl-vep ./vep --input_file=/opt/vep/.vep/{self.sample}_master.vcf --output_file=/opt/vep/.vep/{self.sample}_master.vep.vcf --vcf --everything --cache --dir_cache=/opt/vep/.vep  --force_overwrite --per_gene --format=vcf --assembly=GRCh38 --offline  --fasta=/opt/vep/.vep/GRCh38.d1.vd1.fa')
         subprocess.run(
-            f'aws s3 cp vep_data/{self.sample_id}_master.vep.vcf {self.s3_archive_upload_url}/VEP_vcfs',
+            f'aws s3 cp vep_data/{self.sample}_master.vep.vcf {self.s3_archive_upload_url}/VEP_vcfs/',
             shell=True,
             check=True)
         shutil.rmtree(f'{self.sample}/')
