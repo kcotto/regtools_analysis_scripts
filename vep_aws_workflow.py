@@ -88,16 +88,16 @@ class RegtoolsWorkflow:
             f'aws s3 cp {self.s3_archive_upload_url}/{self.cohort}/{self.sample}.tar.gz {self.sample}.tar.gz',
             shell=True,
             check=True)
-        subprocess.run(f'tar xzf {self.sample}.tar.gz {self.sample}_master.vcf', shell=True, check=True)
+        subprocess.run(f'tar xzf {self.sample}.tar.gz {self.sample}/{self.sample}_master.vcf', shell=True, check=True)
         os.remove(f'{self.sample}.tar.gz')
-        subprocess.run(f'mv *.vcf vep_data/')
+        subprocess.run(f'mv {self.sample}/*.vcf vep_data/')
         self.run_docker_image_as_current_user(
             f'ensemblorg/ensembl-vep ./vep --input_file=/opt/vep/.vep/{self.sample_id}.vcf --output_file=/opt/vep/.vep/{self.sample_id}_master.vep.vcf --vcf --everything --cache --dir_cache=/opt/vep/.vep/vep/  --force_overwrite --per_gene --format=vcf --assembly=GRCh38 --offline  --fasta=/opt/vep/.vep/GRCh38.d1.vd1.fa')
         subprocess.run(
             f'aws s3 cp vep_data/{self.sample_id}_master.vep.vcf {self.s3_archive_upload_url}/VEP_vcfs',
             shell=True,
             check=True)
-        os.remove(f'{self.sample}_master.vcf')
+        shutil.rmtree(f'{self.sample}/')
         files_to_remove_from_vep = glob.glob('vep_data/*.vcf')
         for file in files_to_remove_from_vep:
             os.remove(file)
