@@ -133,9 +133,6 @@ try:
             logger.info(f'Starting sample "{sample_id}"')
             sqs.report_status(sample_id, f'Starting sample {sample_id}')
 
-            workflow.download_from_s3_and_run_vep()
-            sqs.report_status(sample_id, f'Downloaded sample {sample_id}')
-
 
             start_time = datetime.datetime.now()
             workflow.download_from_s3_and_run_vep()
