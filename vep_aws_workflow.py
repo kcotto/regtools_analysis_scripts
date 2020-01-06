@@ -13,6 +13,7 @@ import datetime
 import traceback
 import requests
 import fnmatch
+import glob
 
 from sqs_wrapper import SQSWrapper
 
@@ -117,7 +118,7 @@ sqs = SQSWrapper('default', 'vep')
 try:
     logger.info('Waiting for work item')
     for sample_id in sqs.work_items():
-        filesystem_path = 'regtools_wd_' + sample_id
+        filesystem_path = self.sample
         try:
             workflow = RegtoolsWorkflow(sample_id=sample_id,
                                         filesystem_path=filesystem_path,
