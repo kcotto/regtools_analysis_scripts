@@ -18,7 +18,7 @@ for c in ${cohorts[@]}; do
 	ls samples/ > dir_names.tsv
 	for k in ${tags[@]}; do
 		for i in samples/TCGA*; do
-			bash /data/variants.sh ${i}/cse_identify_filtered_${k}.tsv ${i}/variants_${k}.bed
+			bash /workspace/regtools_analysis_scripts/variants.sh ${i}/cse_identify_filtered_${k}.tsv ${i}/variants_${k}.bed
 		done
 		echo -e 'chrom\tstart\tend\tsamples' > all_splicing_variants_${k}.bed
 		for i in samples/TCGA*; do
