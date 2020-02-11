@@ -81,7 +81,7 @@ def get_bam(sample, token_file, chrom, bam_window_start, bam_window_end, variant
             run(f'samtools index {bam_file}')
 
 
-with open('/Users/kcotto/PycharmProjects/Regtools_testing_local/test.yaml') as f:
+with open('test.yaml') as f:
     data = yaml.load(f, Loader=yaml.SafeLoader)
 
 file_location = data['file_location']
@@ -96,18 +96,18 @@ bam_location = data['bam_location']
 
 for cohort in cohorts:
     run(
-        f'aws s3 cp {results_files}/{cohort}/compare_junctions2/hist/junction_pvalues_significant_0.05_filtered_BH_default.tsv .')
+        f'aws s3 cp {results_files}/{cohort}/compare_junctions2/hist/{cohort}_junction_pvalues_significant_0.05_filtered_BH_default.tsv .')
     run(
-        f'aws s3 cp {results_files}/{cohort}/compare_junctions2/hist/junction_pvalues_significant_0.05_filtered_BH_i50e5.tsv .')
+        f'aws s3 cp {results_files}/{cohort}/compare_junctions2/hist/{cohort}_junction_pvalues_significant_0.05_filtered_BH_i50e5.tsv .')
     run(
-        f'aws s3 cp {results_files}/{cohort}/compare_junctions2/hist/junction_pvalues_significant_0.05_filtered_BH_E.tsv .')
+        f'aws s3 cp {results_files}/{cohort}/compare_junctions2/hist/{cohort}_junction_pvalues_significant_0.05_filtered_BH_E.tsv .')
     run(
-        f'aws s3 cp {results_files}/{cohort}/compare_junctions2/hist/junction_pvalues_significant_0.05_filtered_BH_I.tsv .')
+        f'aws s3 cp {results_files}/{cohort}/compare_junctions2/hist/{cohort}_junction_pvalues_significant_0.05_filtered_BH_I.tsv .')
     run(f'aws s3 cp {token_file} .')
     
 
 
-    files = glob.glob('junction_pvalues_significant_0.05_filtered_BH*.tsv')
+    files = glob.glob('*junction_pvalues_significant_0.05_filtered_BH*.tsv')
     if os.path.exists('igv_session'):
         shutil.rmtree('igv_session')
 
@@ -116,8 +116,8 @@ for cohort in cohorts:
         with open(i, 'r') as result_file:
             reader = csv.DictReader(result_file, delimiter='\t')
             for line in reader:
-                os.mkdir('igv_session')
-                os.chdir('igv_session')
+                os.mkdir(f'{cohort}_igv_session')
+                os.chdir(f'{cohort}_igv_session')
                 samples_field = line['variant_junction_samples']
                 samples = samples_field.split(',')
                 vcf_bed_sample = samples[0]
@@ -165,5 +165,5 @@ for cohort in cohorts:
                     outfile.write('</Session>\n')
                 run(f'aws s3 cp {xml_file} {igv_session_location}/{cohort}/{tag}/')
                 os.chdir('..')
-                if os.path.exists('igv_session'):
-                    shutil.rmtree('igv_session')
+                if os.path.exists(f'{cohort}_igv_session'):
+                    shutil.rmtree(f'{cohort}_igv_session')
