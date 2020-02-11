@@ -116,6 +116,8 @@ for cohort in cohorts:
         with open(i, 'r') as result_file:
             reader = csv.DictReader(result_file, delimiter='\t')
             for line in reader:
+                os.mkdir(f'sample')
+                os.chdir(f'sample')
                 samples_field = line['junction_samples']
                 samples = samples_field.split(',')
                 vcf_bed_sample = samples[0]
@@ -162,6 +164,9 @@ for cohort in cohorts:
                     outfile.write('</HiddenAttributes>\n')
                     outfile.write('</Session>\n')
                 run(f'aws s3 cp {xml_file} {igv_session_location}/{cohort}/{tag}/')
+                os.chdir('..')
+                if os.path.exists(f'sample'):
+                    shutil.rmtree(f'sample')
     os.chdir('..')
     if os.path.exists(f'{cohort}_igv_session'):
         shutil.rmtree(f'{cohort}_igv_session')
