@@ -96,13 +96,13 @@ bam_location = data['bam_location']
 
 for cohort in cohorts:
     run(
-        f'aws s3 cp {results_files}/{cohort}/compare_junctions2/hist/{cohort}_junction_pvalues_significant_0.05_filtered_BH_default.tsv .')
+        f'aws s3 cp {results_files}/{cohort}/compare_junctions2/hist/junction_pvalues_significant_0.05_filtered_BH_default.tsv .')
     run(
-        f'aws s3 cp {results_files}/{cohort}/compare_junctions2/hist/{cohort}_junction_pvalues_significant_0.05_filtered_BH_i50e5.tsv .')
+        f'aws s3 cp {results_files}/{cohort}/compare_junctions2/hist/junction_pvalues_significant_0.05_filtered_BH_i50e5.tsv .')
     run(
-        f'aws s3 cp {results_files}/{cohort}/compare_junctions2/hist/{cohort}_junction_pvalues_significant_0.05_filtered_BH_E.tsv .')
+        f'aws s3 cp {results_files}/{cohort}/compare_junctions2/hist/junction_pvalues_significant_0.05_filtered_BH_E.tsv .')
     run(
-        f'aws s3 cp {results_files}/{cohort}/compare_junctions2/hist/{cohort}_junction_pvalues_significant_0.05_filtered_BH_I.tsv .')
+        f'aws s3 cp {results_files}/{cohort}/compare_junctions2/hist/junction_pvalues_significant_0.05_filtered_BH_I.tsv .')
     run(f'aws s3 cp {token_file} .')
     
 
