@@ -118,7 +118,7 @@ for cohort in cohorts:
             for line in reader:
                 os.mkdir(f'{cohort}_igv_session')
                 os.chdir(f'{cohort}_igv_session')
-                samples_field = line['variant_junction_samples']
+                samples_field = line['junction_samples']
                 samples = samples_field.split(',')
                 vcf_bed_sample = samples[0]
                 chrom = line['chrom']
