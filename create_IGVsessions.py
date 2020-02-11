@@ -19,10 +19,11 @@ input_parser = argparse.ArgumentParser(
     description="Create IGV sessions for TCGA data",
 )
 input_parser.add_argument(
-    'yaml file',
+    'yaml_file',
     help="Yaml file with inputs",
 )
 
+args = input_parser.parse_args()
 
 def run(cmd):
     subprocess.run(cmd, shell=True, check=True, stdout=sys.stdout)
@@ -81,7 +82,9 @@ def get_bam(sample, token_file, chrom, bam_window_start, bam_window_end, variant
             run(f'samtools index {bam_file}')
 
 
-with open('test.yaml') as f:
+yamlfile = args.yaml_file
+
+with open(yamlfile) as f:
     data = yaml.load(f, Loader=yaml.SafeLoader)
 
 file_location = data['file_location']
