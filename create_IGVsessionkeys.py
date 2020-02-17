@@ -116,6 +116,7 @@ for cohort in cohorts:
         f'aws s3 cp {results_files}/{cohort}/compare_junctions2/hist/junction_pvalues_significant_0.05_filtered_BH_I.tsv .')
     run(f'aws s3 cp {token_file} .')
 
+    # {cohort}|{tag(default, etc)}|{junction_samples}|{chrom}|{start}|{end}|{variant_junction_info}
     files = glob.glob('*junction_pvalues_significant_0.05_filtered_BH*.tsv')
 
     for i in files:
