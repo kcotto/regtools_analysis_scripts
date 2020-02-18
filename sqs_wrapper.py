@@ -4,11 +4,6 @@ import socket
 import json
 import boto3
 
-"""Simple wrapper for AWS SQS"""
-import logging
-import socket
-import json
-import boto3
 class SQSWrapper():
     """
     Simple wrapper class for AWS SQS
@@ -24,6 +19,7 @@ class SQSWrapper():
             raise Exception('SQSWrapper: base_queue_name must be passed to the constructor')
         self.__base_queue_name = base_queue_name
         self.__work_queue_name = f'{self.__base_queue_name}_work.fifo'
+        self.__error_queue_name = f'{self.__base_queue_name}_error.fifo'
         self.__status_queue_name = f'{self.__base_queue_name}_status'
         formatter = logging.Formatter('%(asctime)s:%(levelname)s:%(name)s:%(message)s')
         formatter.default_msec_format = '%s.%03d'
@@ -40,6 +36,14 @@ class SQSWrapper():
         except self.__sqs.meta.client.exceptions.QueueDoesNotExist:
             self.__work_item_fifo = self.__sqs.create_queue(QueueName=self.__work_queue_name, Attributes={'DelaySeconds': '5', 'FifoQueue': 'true', 'VisibilityTimeout': '43200'})
             self.__logger.debug(f'Created new FIFO queue "{self.__work_queue_name}"')
+
+        try:
+            self.__error_item_fifo = self.__sqs.get_queue_by_name(QueueName=self.__error_queue_name)
+            self.__logger.debug(f'Found existing error queue "{self.__error_queue_name}"')
+        except self.__sqs.meta.client.exceptions.QueueDoesNotExist:
+            self.__error_item_fifo = self.__sqs.create_queue(QueueName=self.__error_queue_name, Attributes={'DelaySeconds': '5', 'FifoQueue': 'true', 'VisibilityTimeout': '43200'})
+            self.__logger.debug(f'Created new FIFO error queue "{self.__error_queue_name}"')
+
         try:
             self.__status_queue = self.__sqs.get_queue_by_name(QueueName=self.__status_queue_name)
             self.__logger.debug(f'Found existing queue "{self.__status_queue_name}"')
@@ -61,7 +65,7 @@ class SQSWrapper():
                 self.__logger.debug(f'Got work item "{message.body}"')
                 self.__logger.debug(f'Deleting work item "{message.body}"')
                 body = message.body
-                # message.delete()
+                message.delete()
                 yield body
     def report_status(self, work_item: str, message: str, is_fatal: bool = False, is_complete: bool = False):
         """Report a status message to the status queue"""
@@ -74,6 +78,11 @@ class SQSWrapper():
         }
         self.__logger.debug(f'Reporting status: "{message}", is_fatal: {is_fatal}')
         response = self.__status_queue.send_message(MessageBody=json.dumps(body))
+        return response['MessageId']
+    def queue_error_item(self, error_item: str):
+        """Put an error item on the queue"""
+        response = self.__error_item_fifo.send_message(MessageBody=error_item, MessageDeduplicationId=error_item, MessageGroupId='ErrorItems')
+        self.__logger.info(f'Queued error item "{error_item}" with MessageId: {response["MessageId"]}')
         return response['MessageId']
     def status_items(self):
         """Get the next status item from the queue"""
