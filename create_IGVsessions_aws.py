@@ -82,9 +82,9 @@ for job_info in sqs.work_items():
     tag = fields[1]
     junction_samples = fields[2]
     variant_junction = fields[3]
-    chrom = variant_junction.split('|')[3].split('_')[0]
-    start = variant_junction.split('|')[3].split('_')[1]
-    end = variant_junction.split('|')[3].split('_')[2]
+    chrom = variant_junction.split('_')[0]
+    start = variant_junction.split('_')[1]
+    end = variant_junction.split('_')[2]
     variant_junction_wo_colon = variant_junction.replace(':', '_')
     directory_name = f'{cohort}_{variant_junction_wo_colon}'
     if os.path.exists(directory_name):
