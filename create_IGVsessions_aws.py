@@ -1,4 +1,3 @@
-import yaml
 import subprocess
 import glob
 import csv
@@ -8,7 +7,6 @@ import requests
 import shutil
 import json
 from pathlib import Path
-import argparse
 from sqs_wrapper import SQSWrapper
 
 sqs = SQSWrapper('default', 'igv')
