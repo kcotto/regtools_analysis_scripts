@@ -81,7 +81,7 @@ for job_info in sqs.work_items():
     cohort = fields[0]
     tag = fields[1]
     junction_samples = fields[2]
-    variant_junction = fields[6]
+    variant_junction = fields[3]
     chrom = variant_junction.split('|')[3].split('_')[0]
     start = variant_junction.split('|')[3].split('_')[1]
     end = variant_junction.split('|')[3].split('_')[2]
