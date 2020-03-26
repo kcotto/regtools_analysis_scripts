@@ -1,4 +1,9 @@
 import csv
+import subprocess
+import glob
+
+def run(cmd):
+    subprocess.run(cmd, shell=True, check=True, stdout=sys.stdout)
 
 def read_venn(filename):
     ding_ver = set()
@@ -175,28 +180,34 @@ cancer_genes = read_cancergenes('/Users/kcotto/Downloads/Census_all.tsv')
 DV,D,V = read_venn('/Users/kcotto/Downloads/venn_result22030.txt')
 gtf = read_gencode('/Users/kcotto/PycharmProjects/Regtools_testing_local/gencode.v29.annotation.gtf')
 
-# cohorts=['CHOL', 'DLBC', 'UCS', 'KICH', 'MESO', 'UVM', 'ACC', 'SKCM',
-#           'THYM', 'GBM', 'READ', 'TGCT', 'ESCA', 'PAAD', 'PCPG', 'SARC',
-#           'OV', 'KIRP', 'CESC', 'KIRC', 'LIHC', 'STAD', 'BLCA', 'COAD',
-#           'PRAD', 'THCA', 'LUSC', 'HNSC', 'LGG', 'LUAD', 'UCEC', 'BRCA']
-# results_files = 's3://regtools-results-unstranded'
+cohorts=['CHOL', 'DLBC', 'UCS', 'KICH', 'MESO', 'UVM', 'ACC', 'SKCM',
+          'THYM', 'GBM', 'READ', 'TGCT', 'ESCA', 'PAAD', 'PCPG', 'SARC',
+          'OV', 'KIRP', 'CESC', 'KIRC', 'LIHC', 'STAD', 'BLCA', 'COAD',
+          'PRAD', 'THCA', 'LUSC', 'HNSC', 'LGG', 'LUAD', 'UCEC', 'BRCA']
+results_files = 's3://regtools-results-unstranded'
 
-# for cohort in cohorts:
-#         if os.path.exists(f'{cohort}_igv_session'):
-#             shutil.rmtree(f'{cohort}_igv_session')
-#         os.mkdir(f'{cohort}_igv_session')
-#         os.chdir(f'{cohort}_igv_session')
+for cohort in cohorts:
+    if os.path.exists(f'{cohort}_igv_session'):
+        shutil.rmtree(f'{cohort}_igv_session')
+    os.mkdir(f'{cohort}_igv_session')
+    os.chdir(f'{cohort}_igv_session')
 
-#         run(
-#             f'aws s3 cp {results_files}/{cohort}/compare_junctions2/hist/junction_pvalues_significant_0.05_filtered_BH_default.tsv .')
-#         run(
-#             f'aws s3 cp {results_files}/{cohort}/compare_junctions2/hist/junction_pvalues_significant_0.05_filtered_BH_i50e5.tsv .')
-#         run(
-#             f'aws s3 cp {results_files}/{cohort}/compare_junctions2/hist/junction_pvalues_significant_0.05_filtered_BH_E.tsv .')
-#         run(
-#             f'aws s3 cp {results_files}/{cohort}/compare_junctions2/hist/junction_pvalues_significant_0.05_filtered_BH_I.tsv .')
+    run(
+        f'aws s3 cp {results_files}/{cohort}/compare_junctions2/hist/junction_pvalues_significant_0.05_filtered_BH_default_gtex_spliceai_w_IGVsessions.tsv .')
+    run(
+        f'aws s3 cp {results_files}/{cohort}/compare_junctions2/hist/junction_pvalues_significant_0.05_filtered_BH_i50e5_gtex_spliceai_w_IGVsessions.tsv .')
+    run(
+        f'aws s3 cp {results_files}/{cohort}/compare_junctions2/hist/junction_pvalues_significant_0.05_filtered_BH_E_gtex_spliceai_w_IGVsessions.tsv .')
+    run(
+        f'aws s3 cp {results_files}/{cohort}/compare_junctions2/hist/junction_pvalues_significant_0.05_filtered_BH_I_gtex_spliceai_w_IGVsessions.tsv .')
 
-#         # {cohort}|{tag(default, etc)}|{junction_samples}|{chrom}|{start}|{end}|{variant_junction_info}
-#         files = glob.glob('*junction_pvalues_significant_0.05_filtered_BH*.tsv')
-
-make_spliceai_bed('/Users/kcotto/Downloads/ACC_junction_pvalues_significant_0.05_filtered_BH_i50e5_gtex_spliceai_w_IGVsessions.tsv', gtf, cancer_genes, DV, D, V)
+    files = glob.glob('*junction_pvalues_significant_0.05_filtered_BH*.tsv')
+    for file in files:
+        make_spliceai_bed(file, gtf, cancer_genes, DV, D, V)
+        bedfiles = glob.glob('*.bed')
+        for bedfile in bedfiles: 
+            run(
+            f'aws s3 cp {bedfile} s3://regtools-igv-files/spliceAI/')
+    os.chdir('..')
+    if os.path.exists(f'{cohort}_igv_session'):
+        shutil.rmtree(f'{cohort}_igv_session')
