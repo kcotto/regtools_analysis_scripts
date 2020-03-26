@@ -1,6 +1,11 @@
-import csv
 import subprocess
 import glob
+import csv
+import sys
+import os
+import shutil
+from pathlib import Path
+import argparse
 
 def run(cmd):
     subprocess.run(cmd, shell=True, check=True, stdout=sys.stdout)
@@ -176,9 +181,9 @@ def make_spliceai_bed(filename, gtf_dict, cancer_genes, DV, D, V):
             outfile.write(out_line + '\n')
 
 
-cancer_genes = read_cancergenes('/Users/kcotto/Downloads/Census_all.tsv')
-DV,D,V = read_venn('/Users/kcotto/Downloads/venn_result22030.txt')
-gtf = read_gencode('/Users/kcotto/PycharmProjects/Regtools_testing_local/gencode.v29.annotation.gtf')
+cancer_genes = read_cancergenes('Census_all.tsv')
+DV,D,V = read_venn('venn_result22030.txt')
+gtf = read_gencode('gencode.v29.annotation.gtf')
 
 cohorts=['CHOL', 'DLBC', 'UCS', 'KICH', 'MESO', 'UVM', 'ACC', 'SKCM',
           'THYM', 'GBM', 'READ', 'TGCT', 'ESCA', 'PAAD', 'PCPG', 'SARC',
@@ -193,13 +198,13 @@ for cohort in cohorts:
     os.chdir(f'{cohort}_igv_session')
 
     run(
-        f'aws s3 cp {results_files}/{cohort}/compare_junctions2/hist/junction_pvalues_significant_0.05_filtered_BH_default_gtex_spliceai_w_IGVsessions.tsv .')
+        f'aws s3 cp {results_files}/{cohort}/compare_junctions2/hist/{cohort}_junction_pvalues_significant_0.05_filtered_BH_default_gtex_spliceai_w_IGVsessions.tsv .')
     run(
-        f'aws s3 cp {results_files}/{cohort}/compare_junctions2/hist/junction_pvalues_significant_0.05_filtered_BH_i50e5_gtex_spliceai_w_IGVsessions.tsv .')
+        f'aws s3 cp {results_files}/{cohort}/compare_junctions2/hist/{cohort}_junction_pvalues_significant_0.05_filtered_BH_i50e5_gtex_spliceai_w_IGVsessions.tsv .')
     run(
-        f'aws s3 cp {results_files}/{cohort}/compare_junctions2/hist/junction_pvalues_significant_0.05_filtered_BH_E_gtex_spliceai_w_IGVsessions.tsv .')
+        f'aws s3 cp {results_files}/{cohort}/compare_junctions2/hist/{cohort}_junction_pvalues_significant_0.05_filtered_BH_E_gtex_spliceai_w_IGVsessions.tsv .')
     run(
-        f'aws s3 cp {results_files}/{cohort}/compare_junctions2/hist/junction_pvalues_significant_0.05_filtered_BH_I_gtex_spliceai_w_IGVsessions.tsv .')
+        f'aws s3 cp {results_files}/{cohort}/compare_junctions2/hist/{cohort}_junction_pvalues_significant_0.05_filtered_BH_I_gtex_spliceai_w_IGVsessions.tsv .')
 
     files = glob.glob('*junction_pvalues_significant_0.05_filtered_BH*.tsv')
     for file in files:
