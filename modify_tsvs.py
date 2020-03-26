@@ -76,7 +76,7 @@ def read_gencode(filename):
                     result[donor_key] -= 1
     return result
 
-def make_spliceai_bed(filename, gtf_dict, cancer_genes, DV, D, V):
+def make_spliceai_bed(filename, cohort, gtf_dict, cancer_genes, DV, D, V):
     with open(filename, 'r') as input_file, open(f'{filename}_edited', 'w') as outfile:
         reader = csv.DictReader(input_file, delimiter='\t')
         old_header = reader.fieldnames.copy()
@@ -110,7 +110,7 @@ def make_spliceai_bed(filename, gtf_dict, cancer_genes, DV, D, V):
                     variant = int(variant_junction.split('-')[-1])
                     junc_end_1 = int(variant_junction.split('_')[1])
                     junc_end_2 = int(variant_junction.split('_')[2])
-                    new_file = f'{samples_field}_{variant_junction}.bed'
+                    new_file = f'{cohort}_{variant_junction}.bed'
                     P_AG = variant + DP_AG
                     P_AL = variant + DP_AL
                     P_DG = variant + DP_DG
@@ -125,7 +125,7 @@ def make_spliceai_bed(filename, gtf_dict, cancer_genes, DV, D, V):
                         fw(chrom, P_AL, 'acceptor_loss', DS_AL, strand, red) 
                         fw(chrom, P_DG, 'donor_gain', DS_DG, strand, blue) 
                         fw(chrom, P_DL, 'donor_loss', DS_DL, strand, blue)
-                    new_spliceAI_tags = []
+                    new_spliceAI_t ags = []
                     if strand == '+':
                         if junc_end_1 == P_DG or junc_end_1 == P_DL:
                             new_spliceAI_tags.append('novel donor match')
@@ -211,7 +211,7 @@ for cohort in cohorts:
 
     files = glob.glob('*junction_pvalues_significant_0.05_filtered_BH*.tsv')
     for file in files:
-        make_spliceai_bed(file, gtf, cancer_genes, DV, D, V)
+        make_spliceai_bed(file, cohort, gtf, cancer_genes, DV, D, V)
         bedfiles = glob.glob('*.bed')
         for bedfile in bedfiles: 
             run(
