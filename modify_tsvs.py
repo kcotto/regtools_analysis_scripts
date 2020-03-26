@@ -93,7 +93,9 @@ def make_spliceai_bed(filename, gtf_dict, cancer_genes, DV, D, V):
             new_spliceai_field = 'NA'
             chrom = variant_junction.split('_')[0]
             if spliceai != 'NA':
-                if '.' in spliceai:
+                if '|.' in spliceai:
+                    continue
+                else:
                     spliceai_fields = spliceai.split('|')
                     DS_AG = spliceai_fields[2]
                     DS_AL = spliceai_fields[3]
