@@ -93,65 +93,66 @@ def make_spliceai_bed(filename, gtf_dict, cancer_genes, DV, D, V):
             new_spliceai_field = 'NA'
             chrom = variant_junction.split('_')[0]
             if spliceai != 'NA':
-                spliceai_fields = spliceai.split('|')
-                DS_AG = spliceai_fields[2]
-                DS_AL = spliceai_fields[3]
-                DS_DG = spliceai_fields[4]
-                DS_DL = spliceai_fields[5]
-                DP_AG = int(spliceai_fields[6])
-                DP_AL = int(spliceai_fields[7])
-                DP_DG = int(spliceai_fields[8])
-                DP_DL = int(spliceai_fields[9])
-                samples_field = samples_field.replace(',','_')
-                variant_junction = variant_junction.replace(':', '_')
-                variant = int(variant_junction.split('-')[-1])
-                junc_end_1 = int(variant_junction.split('_')[1])
-                junc_end_2 = int(variant_junction.split('_')[2])
-                new_file = f'{samples_field}_{variant_junction}.bed'
-                P_AG = variant + DP_AG
-                P_AL = variant + DP_AL
-                P_DG = variant + DP_DG
-                P_DL = variant + DP_DL
-                red = '255,0,0'
-                blue = '0,0,255'
-                header = 'track name="SpliceAI sites" description="SpliceAI acceptor/donor positions" itemRgb="On"'
-                with open(new_file, 'w') as output_file:
-                    fw = lambda a,b,c,d,e,f: output_file.write(f'{a}\t{b}\t{b}\t{c}\t{d}\t{e}\t{b}\t{b}\t{f}\n')
-                    output_file.write(header + '\n')
-                    fw(chrom, P_AG, 'acceptor_gain', DS_AG, strand, red)
-                    fw(chrom, P_AL, 'acceptor_loss', DS_AL, strand, red) 
-                    fw(chrom, P_DG, 'donor_gain', DS_DG, strand, blue) 
-                    fw(chrom, P_DL, 'donor_loss', DS_DL, strand, blue)
-                new_spliceAI_tags = []
-                if strand == '+':
-                    if junc_end_1 == P_DG or junc_end_1 == P_DL:
-                        new_spliceAI_tags.append('novel donor match')
-                    if junc_end_2 == P_AG or junc_end_2 == P_AL:
-                        new_spliceAI_tags.append('novel acceptor match')
-                else:
-                    if junc_end_2 == P_DG or junc_end_2 == P_DL:
-                        new_spliceAI_tags.append('novel donor match')
-                    if junc_end_1 == P_AG or junc_end_1 == P_AL:
-                        new_spliceAI_tags.append('novel acceptor match')
-                AG_key = f'{chrom}_{P_AG}'
-                AL_key = f'{chrom}_{P_AL}'
-                DG_key = f'{chrom}_{P_DG}'
-                DL_key = f'{chrom}_{P_DL}'
-                keys = [AG_key, AL_key, DG_key, DL_key]
-                is_acceptor = False
-                is_donor = False
-                for key in keys:
-                    if key in gtf_dict:
-                        if gtf_dict[key] > 0:
-                            is_acceptor = True
-                        if gtf_dict[key] < 0:
-                            is_donor = True
-                if is_acceptor:
-                    new_spliceAI_tags.append('canonical acceptor match')
-                if is_donor:
-                    new_spliceAI_tags.append('canonical donor match')
-                if new_spliceAI_tags:
-                    new_spliceai_field = ','.join(new_spliceAI_tags)
+                if '.' in spliceai:
+                    spliceai_fields = spliceai.split('|')
+                    DS_AG = spliceai_fields[2]
+                    DS_AL = spliceai_fields[3]
+                    DS_DG = spliceai_fields[4]
+                    DS_DL = spliceai_fields[5]
+                    DP_AG = int(spliceai_fields[6])
+                    DP_AL = int(spliceai_fields[7])
+                    DP_DG = int(spliceai_fields[8])
+                    DP_DL = int(spliceai_fields[9])
+                    samples_field = samples_field.replace(',','_')
+                    variant_junction = variant_junction.replace(':', '_')
+                    variant = int(variant_junction.split('-')[-1])
+                    junc_end_1 = int(variant_junction.split('_')[1])
+                    junc_end_2 = int(variant_junction.split('_')[2])
+                    new_file = f'{samples_field}_{variant_junction}.bed'
+                    P_AG = variant + DP_AG
+                    P_AL = variant + DP_AL
+                    P_DG = variant + DP_DG
+                    P_DL = variant + DP_DL
+                    red = '255,0,0'
+                    blue = '0,0,255'
+                    header = 'track name="SpliceAI sites" description="SpliceAI acceptor/donor positions" itemRgb="On"'
+                    with open(new_file, 'w') as output_file:
+                        fw = lambda a,b,c,d,e,f: output_file.write(f'{a}\t{b}\t{b}\t{c}\t{d}\t{e}\t{b}\t{b}\t{f}\n')
+                        output_file.write(header + '\n')
+                        fw(chrom, P_AG, 'acceptor_gain', DS_AG, strand, red)
+                        fw(chrom, P_AL, 'acceptor_loss', DS_AL, strand, red) 
+                        fw(chrom, P_DG, 'donor_gain', DS_DG, strand, blue) 
+                        fw(chrom, P_DL, 'donor_loss', DS_DL, strand, blue)
+                    new_spliceAI_tags = []
+                    if strand == '+':
+                        if junc_end_1 == P_DG or junc_end_1 == P_DL:
+                            new_spliceAI_tags.append('novel donor match')
+                        if junc_end_2 == P_AG or junc_end_2 == P_AL:
+                            new_spliceAI_tags.append('novel acceptor match')
+                    else:
+                        if junc_end_2 == P_DG or junc_end_2 == P_DL:
+                            new_spliceAI_tags.append('novel donor match')
+                        if junc_end_1 == P_AG or junc_end_1 == P_AL:
+                            new_spliceAI_tags.append('novel acceptor match')
+                    AG_key = f'{chrom}_{P_AG}'
+                    AL_key = f'{chrom}_{P_AL}'
+                    DG_key = f'{chrom}_{P_DG}'
+                    DL_key = f'{chrom}_{P_DL}'
+                    keys = [AG_key, AL_key, DG_key, DL_key]
+                    is_acceptor = False
+                    is_donor = False
+                    for key in keys:
+                        if key in gtf_dict:
+                            if gtf_dict[key] > 0:
+                                is_acceptor = True
+                            if gtf_dict[key] < 0:
+                                is_donor = True
+                    if is_acceptor:
+                        new_spliceAI_tags.append('canonical acceptor match')
+                    if is_donor:
+                        new_spliceAI_tags.append('canonical donor match')
+                    if new_spliceAI_tags:
+                        new_spliceai_field = ','.join(new_spliceAI_tags)
             cancer_genes_results = []
             for gene in genes:
                 if gene in cancer_genes:
