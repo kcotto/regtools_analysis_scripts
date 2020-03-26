@@ -125,7 +125,7 @@ def make_spliceai_bed(filename, cohort, gtf_dict, cancer_genes, DV, D, V):
                         fw(chrom, P_AL, 'acceptor_loss', DS_AL, strand, red) 
                         fw(chrom, P_DG, 'donor_gain', DS_DG, strand, blue) 
                         fw(chrom, P_DL, 'donor_loss', DS_DL, strand, blue)
-                    new_spliceAI_t ags = []
+                    new_spliceAI_tags = []
                     if strand == '+':
                         if junc_end_1 == P_DG or junc_end_1 == P_DL:
                             new_spliceAI_tags.append('novel donor match')
