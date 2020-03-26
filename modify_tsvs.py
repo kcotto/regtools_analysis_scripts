@@ -88,11 +88,12 @@ def make_spliceai_bed(filename, gtf_dict, cancer_genes, DV, D, V):
             variant_junction = line['variant_junction_info']
             samples_field = line['variant_samples']
             strand = line['strand']
-            spliceai_fields = spliceai.split('|')
             genes = line['genes'].split(',')
             full_variant = line['variant_info']
             new_spliceai_field = 'NA'
+            chrom = variant_junction.split('_')[0]
             if spliceai != 'NA':
+                spliceai_fields = spliceai.split('|')
                 DS_AG = spliceai_fields[2]
                 DS_AL = spliceai_fields[3]
                 DS_DG = spliceai_fields[4]
@@ -106,7 +107,6 @@ def make_spliceai_bed(filename, gtf_dict, cancer_genes, DV, D, V):
                 variant = int(variant_junction.split('-')[-1])
                 junc_end_1 = int(variant_junction.split('_')[1])
                 junc_end_2 = int(variant_junction.split('_')[2])
-                chrom = variant_junction.split('_')[0]
                 new_file = f'{samples_field}_{variant_junction}.bed'
                 P_AG = variant + DP_AG
                 P_AL = variant + DP_AL
