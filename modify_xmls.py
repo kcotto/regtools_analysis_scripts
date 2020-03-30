@@ -19,7 +19,7 @@ def edit_spliceai(filename, cohort):
             if spliceai != 'NA':
                 variant_junction = line['variant_junction_info']
                 variant_junction = variant_junction.replace(':', '_')
-                samples_field = line['variant_samples']
+                samples_field = line['junction_samples']
                 samples_field = samples_field.replace(',','_')
                 xml_file = '_'.join([samples_field, variant_junction]) + '.xml'
                 tag = filename.split('_')[7]
