@@ -26,9 +26,9 @@ def get_junction_counts(cohort, filename):
             fields = item.split('\t')
             if fields[1] == cohort:
                 sample = fields[0] 
-                # run(f'aws s3 cp {results_files}/{cohort}/{sample}.tar.gz .')
-                # run(f'tar xzf {sample}.tar.gz')
+                run(f'aws s3 cp {results_files}/{cohort}/{sample}.tar.gz .')
                 annotated_bed = f'{sample}/{sample}_annotated.bed'
+                run(f'tar xzf {sample}.tar.gz {annotated_bed}')
                 with open(annotated_bed, 'r') as bedfile:
                     reader = csv.DictReader(bedfile, delimiter='\t')
                     for line in reader:    
