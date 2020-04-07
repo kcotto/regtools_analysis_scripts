@@ -3,16 +3,15 @@ import subprocess
 import sys
 import os
 import shutil
-
 def run(cmd):
     subprocess.run(cmd, shell=True, check=True, stdout=sys.stdout)
-
+def call(cmd):
+    subprocess.call(cmd, shell=True)
 results_files = 's3://regtools-results-unstranded'
 cohorts=['CHOL', 'DLBC', 'UCS', 'KICH', 'MESO', 'UVM', 'ACC', 'SKCM',
           'THYM', 'GBM', 'READ', 'TGCT', 'ESCA', 'PAAD', 'PCPG', 'SARC',
           'OV', 'KIRP', 'CESC', 'KIRC', 'LIHC', 'STAD', 'BLCA', 'COAD',
           'PRAD', 'THCA', 'LUSC', 'HNSC', 'LGG', 'LUAD', 'UCEC', 'BRCA']
-
 def get_junction_counts(cohort, filename):
     output_file = f'{cohort}_counts.txt'
     f = open(f'{cohort}_counts.txt', 'a')
@@ -39,13 +38,13 @@ def get_junction_counts(cohort, filename):
                 shutil.rmtree(sample, ignore_errors=True)
                 shutil.rmtree(f'{sample}.tar.gz', ignore_errors=True)
     run(f'aws s3 cp {output_file} {results_files}/junction_counts/')
-                    
-for cohort in cohorts:
-    get_junction_counts(cohort, 'primarysolidtumors_metadata.tsv')
+    
+# for cohort in cohorts:
+#     get_junction_counts(cohort, 'primarysolidtumors_metadata.tsv')
 
-# if __name__ == '__main__':
-#     if len(sys.argv) == 1:
-#         for cohort in cohorts:
-#             run(f'./.local/bin/pipenv run python get_junction_counts.py {cohort}')
-#     else:
-#         get_junction_counts(sys.argv[1], 'primarysolidtumors_metadata.tsv')
+if __name__ == '__main__':
+    if len(sys.argv) == 1:
+        for cohort in cohorts:
+            call(f'./.local/bin/pipenv run python get_junction_counts.py {cohort} &')
+    else:
+        get_junction_counts(sys.argv[1], 'primarysolidtumors_metadata.tsv')
