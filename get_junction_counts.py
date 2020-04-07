@@ -40,12 +40,12 @@ def get_junction_counts(cohort, filename):
                 shutil.rmtree(f'{sample}.tar.gz', ignore_errors=True)
     run(f'aws s3 cp {output_file} {results_files}/junction_counts/')
                     
+for cohort in cohorts:
+    get_junction_counts(cohort, 'primarysolidtumors_metadata.tsv')
 
-# get_junction_counts(cohort, 'primarysolidtumors_metadata.tsv')
-
-if __name__ == '__main__':
-    if len(sys.argv) == 1:
-        for cohort in cohorts:
-            run(f'./.local/bin/pipenv run python get_junction_counts.py {cohort}')
-    else:
-        get_junction_counts(sys.argv[1], 'primarysolidtumors_metadata.tsv')
+# if __name__ == '__main__':
+#     if len(sys.argv) == 1:
+#         for cohort in cohorts:
+#             run(f'./.local/bin/pipenv run python get_junction_counts.py {cohort}')
+#     else:
+#         get_junction_counts(sys.argv[1], 'primarysolidtumors_metadata.tsv')
