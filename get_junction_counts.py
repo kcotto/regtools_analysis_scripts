@@ -36,9 +36,9 @@ def get_junction_counts(cohort, filename):
                 novel_junctions = total_junctions - counts['DA']
                 f.write(f"{sample}\t{cohort}\t{counts['DA']}\t{counts['D']}\t{counts['A']}\t{counts['NDA']}\t{counts['N']}\t{novel_junctions}\t{total_junctions}\n")
                 shutil.rmtree(sample, ignore_errors=True)
-                shutil.rmtree(f'{sample}.tar.gz', ignore_errors=True)
+                os.remove(f'{sample}.tar.gz')
     run(f'aws s3 cp {output_file} {results_files}/junction_counts/')
-    
+
 # for cohort in cohorts:
 #     get_junction_counts(cohort, 'primarysolidtumors_metadata.tsv')
 
