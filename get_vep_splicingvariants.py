@@ -38,7 +38,7 @@ def get_vep_variants(cohort, filename):
                             variant_start = int(variant_end) - 1
                             info = line[7]
                             if 'splice' in info:
-                                key = f'{cohort}:{chrom}:{variant_start}-{variant_end}'
+                                key = f'{cohort}:{sample}:{chrom}:{variant_start}-{variant_end}'
                                 f.write(f'{key}\n')
                 os.remove(vep_vcf)
     f.close()
