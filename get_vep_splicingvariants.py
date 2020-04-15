@@ -8,10 +8,11 @@ def run(cmd):
 def call(cmd):
     subprocess.call(cmd, shell=True)
 results_files = 's3://regtools-results-unstranded'
-cohorts=['CHOL', 'DLBC', 'UCS', 'KICH', 'MESO', 'UVM', 'ACC', 'SKCM',
-          'THYM', 'GBM', 'READ', 'TGCT', 'ESCA', 'PAAD', 'PCPG', 'SARC',
-          'OV', 'KIRP', 'CESC', 'KIRC', 'LIHC', 'STAD', 'BLCA', 'COAD',
-          'PRAD', 'THCA', 'LUSC', 'HNSC', 'LGG', 'LUAD', 'UCEC', 'BRCA']
+# cohorts=['CHOL', 'DLBC', 'UCS', 'KICH', 'MESO', 'UVM', 'ACC', 'SKCM',
+#           'THYM', 'GBM', 'READ', 'TGCT', 'ESCA', 'PAAD', 'PCPG', 'SARC',
+#           'OV', 'KIRP', 'CESC', 'KIRC', 'LIHC', 'STAD', 'BLCA', 'COAD',
+#           'PRAD', 'THCA', 'LUSC', 'HNSC', 'LGG', 'LUAD', 'UCEC', 'BRCA', 'OSCC', 'HCC', 'SCLC']
+cohorts = ['OSCC', 'HCC', 'SCLC']
 
 def get_vep_variants(cohort, filename):
     output_file = f'{cohort}_vep_splicingvariants.txt'
@@ -52,4 +53,4 @@ if __name__ == '__main__':
         for cohort in cohorts:
             call(f'./.local/bin/pipenv run python get_vep_splicingvariants.py {cohort} &')
     else:
-        get_vep_variants(sys.argv[1], 'primarysolidtumors_metadata.tsv')
+        get_vep_variants(sys.argv[1], 'primarysolidtumors_metadata_wlocal.tsv')
