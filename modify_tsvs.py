@@ -41,6 +41,19 @@ def read_cancergenes(filename):
             result.add(line[0])
     return result
 
+def read_vep(filename):
+    vep = set()
+    with open(filename, 'r') as input_file:
+        reader = csv.reader(input_file, delimiter=',')
+        reader.__next__()
+        reader.__next__()
+        for line in reader:
+            if line[2] == '1':
+                vep.add(line[0])
+    return(vep)
+
+            
+
 def read_gencode(filename):
     result = {}
     with open(filename, 'r') as input_file:
@@ -76,12 +89,13 @@ def read_gencode(filename):
                     result[donor_key] -= 1
     return result
 
-def make_spliceai_bed(filename, cohort, gtf_dict, cancer_genes, DV, D, V):
+def make_spliceai_bed(filename, cohort, gtf_dict, cancer_genes, DV, D, V, vep):
     with open(filename, 'r') as input_file, open(f'{filename}_edited', 'w') as outfile:
         reader = csv.DictReader(input_file, delimiter='\t')
         old_header = reader.fieldnames.copy()
         link_header = old_header[-1]
-        old_header.extend(['cancer_gene?','misplice,veridical match?', link_header])
+        old_header = old_header[:-1]
+        old_header.extend(['cancer_gene?','misplice,veridical match?', 'VEP splicing?', link_header])
         outfile.write('\t'.join(old_header) + '\n')
         for line in reader:
             spliceai = line['SpliceAI_raw']
@@ -97,10 +111,10 @@ def make_spliceai_bed(filename, cohort, gtf_dict, cancer_genes, DV, D, V):
                     continue
                 else:
                     spliceai_fields = spliceai.split('|')
-                    DS_AG = spliceai_fields[2]
-                    DS_AL = spliceai_fields[3]
-                    DS_DG = spliceai_fields[4]
-                    DS_DL = spliceai_fields[5]
+                    # DS_AG = spliceai_fields[2]
+                    # DS_AL = spliceai_fields[3]
+                    # DS_DG = spliceai_fields[4]
+                    # DS_DL = spliceai_fields[5]
                     DP_AG = int(spliceai_fields[6])
                     DP_AL = int(spliceai_fields[7])
                     DP_DG = int(spliceai_fields[8])
@@ -110,21 +124,21 @@ def make_spliceai_bed(filename, cohort, gtf_dict, cancer_genes, DV, D, V):
                     variant = int(variant_junction.split('-')[-1])
                     junc_end_1 = int(variant_junction.split('_')[1])
                     junc_end_2 = int(variant_junction.split('_')[2])
-                    new_file = f'{cohort}_{variant_junction}.bed'
+                    # new_file = f'{cohort}_{variant_junction}.bed'
                     P_AG = variant + DP_AG
                     P_AL = variant + DP_AL
                     P_DG = variant + DP_DG
                     P_DL = variant + DP_DL
-                    red = '255,0,0'
-                    blue = '0,0,255'
-                    header = 'track name="SpliceAI sites" description="SpliceAI acceptor/donor positions" itemRgb="On"'
-                    with open(new_file, 'w') as output_file:
-                        fw = lambda a,b,c,d,e,f: output_file.write(f'{a}\t{b}\t{b}\t{c}\t{d}\t{e}\t{b}\t{b}\t{f}\n')
-                        output_file.write(header + '\n')
-                        fw(chrom, P_AG, 'acceptor_gain', DS_AG, strand, red)
-                        fw(chrom, P_AL, 'acceptor_loss', DS_AL, strand, red) 
-                        fw(chrom, P_DG, 'donor_gain', DS_DG, strand, blue) 
-                        fw(chrom, P_DL, 'donor_loss', DS_DL, strand, blue)
+                    # red = '255,0,0'
+                    # blue = '0,0,255'
+                    # header = 'track name="SpliceAI sites" description="SpliceAI acceptor/donor positions" itemRgb="On"'
+                    # with open(new_file, 'w') as output_file:
+                    #     fw = lambda a,b,c,d,e,f: output_file.write(f'{a}\t{b}\t{b}\t{c}\t{d}\t{e}\t{b}\t{b}\t{f}\n')
+                    #     output_file.write(header + '\n')
+                    #     fw(chrom, P_AG, 'acceptor_gain', DS_AG, strand, red)
+                    #     fw(chrom, P_AL, 'acceptor_loss', DS_AL, strand, red) 
+                    #     fw(chrom, P_DG, 'donor_gain', DS_DG, strand, blue) 
+                    #     fw(chrom, P_DL, 'donor_loss', DS_DL, strand, blue)
                     new_spliceAI_tags = []
                     if strand == '+':
                         if junc_end_1 == P_DG or junc_end_1 == P_DL:
@@ -164,7 +178,7 @@ def make_spliceai_bed(filename, cohort, gtf_dict, cancer_genes, DV, D, V):
             new_cancergenes_field = ','.join(cancer_genes_results)
             file = filename.split('/')[-1]
             cancer_type = file.split('_')[0]
-            paper_key = f'{cancer_type}:{chrom}:{full_variant}'
+            paper_key = f'{cancer_type}:{full_variant}'
             if paper_key in DV:
                 paper_result = 'misplice,veridical'
             elif paper_key in D:
@@ -173,12 +187,17 @@ def make_spliceai_bed(filename, cohort, gtf_dict, cancer_genes, DV, D, V):
                 paper_result = 'veridical'
             else:
                 paper_result = 'NA'
+            if paper_key in vep:
+                vep_result = 'yes'
+            else:
+                vep_result = 'NA'
             new_line = [x for x in line.values() if x is not None]
             new_line[27] = new_spliceai_field
             link = line['IGV_link']
             del new_line[-1]
             new_line.append(new_cancergenes_field)
             new_line.append(paper_result)
+            new_line.append(vep_result)
             new_line.append(link)
             out_line = '\t'.join(new_line)
             outfile.write(out_line + '\n')
@@ -186,7 +205,8 @@ def make_spliceai_bed(filename, cohort, gtf_dict, cancer_genes, DV, D, V):
 
 cancer_genes = read_cancergenes('Census_all.tsv')
 DV,D,V = read_venn('venn_result22030.txt')
-gtf = read_gencode('gencode.v29.annotation.gtf')
+gtf = read_gencode('/Users/kcotto/PycharmProjects/Regtools_testing_local/gencode.v29.annotation.gtf')
+vep = read_vep('/Users/kcotto/Desktop/uniq_master.csv')
 
 cohorts=['CHOL', 'DLBC', 'UCS', 'KICH', 'MESO', 'UVM', 'ACC', 'SKCM',
           'THYM', 'GBM', 'READ', 'TGCT', 'ESCA', 'PAAD', 'PCPG', 'SARC',
@@ -211,11 +231,15 @@ for cohort in cohorts:
 
     files = glob.glob('*junction_pvalues_significant_0.05_filtered_BH*.tsv')
     for file in files:
-        make_spliceai_bed(file, cohort, gtf, cancer_genes, DV, D, V)
-        bedfiles = glob.glob('*.bed')
-        for bedfile in bedfiles: 
+        make_spliceai_bed(file, cohort, gtf, cancer_genes, DV, D, V, vep)
+        # bedfiles = glob.glob('*.bed')
+        # for bedfile in bedfiles: 
+        #     run(
+        #     f'aws s3 cp {bedfile} s3://regtools-igv-files/spliceAI/')
+        edited_files = glob.glob('*_edited')
+        for edited_file in edited_files: 
             run(
-            f'aws s3 cp {bedfile} s3://regtools-igv-files/spliceAI/')
+            f'aws s3 cp {edited_file} {results_files}/{cohort}/compare_junctions2/hist/{edited_file}')
     os.chdir('..')
     if os.path.exists(f'{cohort}_igv_session'):
         shutil.rmtree(f'{cohort}_igv_session')
