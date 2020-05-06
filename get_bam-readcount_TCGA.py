@@ -117,6 +117,6 @@ cohorts=['CHOL', 'DLBC', 'UCS', 'KICH', 'MESO', 'UVM', 'ACC', 'SKCM',
 if __name__ == '__main__':
     if len(sys.argv) == 1:
         for cohort in cohorts:
-            call(f'./.local/bin/pipenv run python get_bam-readcount_TCGA.py {cohort} &')
+            call(f'python3 get_bam-readcount_TCGA.py {cohort} &')
     else:
         run_bam_readcount(sys.argv[1], 'all_TCGA_samples_wannotatedbeds.tsv')
