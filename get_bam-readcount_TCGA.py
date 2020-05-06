@@ -119,4 +119,4 @@ if __name__ == '__main__':
         for cohort in cohorts:
             call(f'./.local/bin/pipenv run python get_bam-readcount_TCGA.py {cohort} &')
     else:
-        get_bam-readcount_TCGA(sys.argv[1], 'all_TCGA_samples_wannotatedbeds.tsv')
+        run_bam_readcount(sys.argv[1], 'all_TCGA_samples_wannotatedbeds.tsv')
