@@ -105,6 +105,9 @@ def run_bam_readcount(cohort, filename):
                                 variants[fields[0]] = fields[1]
                                 f.write(f'{sample}\t{chr}\t{pos}\t{ref}\t{depth}\t{fields[0]}\t{variants[fields[0]]}\n')
                                 f.flush()
+                files_to_rm = glob.glob(f'{sample}*')
+                for file in files_to_rm:
+                    os.remove(file)
 
 cohorts=['CHOL', 'DLBC', 'UCS', 'KICH', 'MESO', 'UVM', 'ACC', 'SKCM',
           'THYM', 'GBM', 'READ', 'TGCT', 'ESCA', 'PAAD', 'PCPG', 'SARC',
