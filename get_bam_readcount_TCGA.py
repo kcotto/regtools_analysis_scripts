@@ -87,7 +87,7 @@ def run_bam_readcount(cohort, filename):
                 bam_rdcount_file = f'{sample}.out'
                 get_bam(sample, token_file, chrom, bam_start, bam_stop)
                 bam_file = f'{sample}_{chrom}_{bam_start}_{bam_stop}.bam'
-                run(f'/home/ec2-user/bam-readcount/bin -b 20 -q 20 -w 1 -l RNF145.bed -f GRCh38.d1.vd1.fa {bam_file} > {bam_rdcount_file}')
+                run(f'/home/ec2-user/bam-readcount/bin/bam-readcount -b 20 -q 20 -w 1 -l RNF145.bed -f GRCh38.d1.vd1.fa {bam_file} > {bam_rdcount_file}')
                 # run(f'/Users/kcotto/Git/bin/bam-readcount -b 20 -q 20 -w 1 -l /Users/kcotto/Git/bin/RNF145.bed -f GRCh38.d1.vd1.fa {bam_file} > {bam_rdcount_file}')
                 with open(bam_rdcount_file, 'r') as inputfile:
                     reader = csv.reader(inputfile, delimiter='\t')
