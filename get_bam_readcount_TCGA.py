@@ -19,7 +19,7 @@ def call(cmd):
 
 def get_bam(sample: str, token_file: str, chrom: str, bam_window_start: int, bam_window_end: int) -> None:
     print('Obtaining bam manifest file')
-    bam_url = 'https://api.gdc.cancer.gov/files?filters=%7B%22op%22%3A%22and%22%2C%22content%22%3A%5B%7B%22op%22%3A%22and%22%2C%22content%22%3A%5B%7B%22op%22%3A%22in%22%2C%22content%22%3A%7B%22field%22%3A%22files.data_format%22%2C%22value%22%3A%5B%22BAM%22%5D%7D%7D%2C%7B%22op%22%3A%22AND%22%2C%22content%22%3A%5B%7B%22op%22%3A%22in%22%2C%22content%22%3A%7B%22field%22%3A%22files.experimental_strategy%22%2C%22value%22%3A%5B%22RNA-Seq%22%5D%7D%7D%2C%7B%22op%22%3A%22and%22%2C%22content%22%3A%5B%7B%22op%22%3A%22IN%22%2C%22content%22%3A%7B%22field%22%3A%22cases.project.program.name%22%2C%22value%22%3A%5B%22TCGA%22%5D%7D%7D%2C%7B%22op%22%3A%22IN%22%2C%22content%22%3A%7B%22field%22%3A%22cases.samples.submitter_id%22%2C%22value%22%3A%5B%22{0}%22%5D%7D%7D%5D%7D%5D%7D%5D%7D%5D%7D&query=files.data_format%20in%20%5B%22BAM%22%5D%20and%20files.experimental_strategy%20in%20%5B%22RNA-Seq%22%5D%20AND%20cases.project.program.name%20IN%20%5BTCGA%5D%20and%20cases.samples.submitter_id%20IN%20%5B%22P{0}&return_type=manifest'.format(sample)
+    bam_url = 'https://api.gdc.cancer.gov/files?filters=%7B%22op%22%3A%22and%22%2C%22content%22%3A%5B%7B%22op%22%3A%22and%22%2C%22content%22%3A%5B%7B%22op%22%3A%22in%22%2C%22content%22%3A%7B%22field%22%3A%22files.data_format%22%2C%22value%22%3A%5B%22BAM%22%5D%7D%7D%2C%7B%22op%22%3A%22AND%22%2C%22content%22%3A%5B%7B%22op%22%3A%22in%22%2C%22content%22%3A%7B%22field%22%3A%22files.experimental_strategy%22%2C%22value%22%3A%5B%22WXS%22%5D%7D%7D%2C%7B%22op%22%3A%22and%22%2C%22content%22%3A%5B%7B%22op%22%3A%22IN%22%2C%22content%22%3A%7B%22field%22%3A%22cases.project.program.name%22%2C%22value%22%3A%5B%22TCGA%22%5D%7D%7D%2C%7B%22op%22%3A%22IN%22%2C%22content%22%3A%7B%22field%22%3A%22cases.samples.submitter_id%22%2C%22value%22%3A%5B%22{0}%22%5D%7D%7D%5D%7D%5D%7D%5D%7D%5D%7D&query=files.data_format%20in%20%5B%22BAM%22%5D%20and%20files.experimental_strategy%20in%20%5B%22RNA-Seq%22%5D%20AND%20cases.project.program.name%20IN%20%5BTCGA%5D%20and%20cases.samples.submitter_id%20IN%20%5B%22P{0}&return_type=manifest'.format(sample)
     response = requests.get(bam_url)
     if response.status_code != 200:
         print(sample, f'Failed to download bam manifest file: HTTP Status Code: {response.status_code}')
@@ -60,8 +60,7 @@ def get_bam(sample: str, token_file: str, chrom: str, bam_window_start: int, bam
                 error_json = response.json()
                 error_message = error_json['error']
                 # write error_message to status queue
-                sqs.report_status(job_info, f'Error message: {error_message}')
-                sqs.queue_error_item(job_info)
+                print(sample, f'Error message: {error_message}')
             else:            
                 # else do this
                 with open(bam_file, "wb") as output_file:
