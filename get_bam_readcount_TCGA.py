@@ -72,7 +72,9 @@ def get_bam(sample: str, token_file: str, chrom: str, bam_window_start: int, bam
 def run_bam_readcount(cohort, filename):
     token_file = 's3://regtools-cwl-sharedfiles/gdc-user-token.txt'
     output_file = f'{cohort}_RNF145_variant_counts.txt'
+    output_file2 = f'{cohort}_RNF145_variant_counts_nofilter.txt'
     f = open(output_file, 'a')
+    g = open(output_file2, 'a')
     chrom =  'chr5'
     position = 159169058
     bam_start = int(position) - 1000
@@ -105,6 +107,26 @@ def run_bam_readcount(cohort, filename):
                                 variants[fields[0]] = fields[1]
                                 f.write(f'{sample}\t{chr}\t{pos}\t{ref}\t{depth}\t{fields[0]}\t{variants[fields[0]]}\n')
                                 f.flush()
+                bam_rdcount_file = f'{sample}_nofilter.out'
+                bam_file = f'{sample}_{chrom}_{bam_start}_{bam_stop}.bam'
+                run(f'/home/ec2-user/bam-readcount/bin/bam-readcount -b 20 -q 20 -w 1 -l RNF145.bed -f GRCh38.d1.vd1.fa {bam_file} > {bam_rdcount_file}')
+                # run(f'/Users/kcotto/Git/bin/bam-readcount -b 20 -q 20 -w 1 -l /Users/kcotto/Git/bin/RNF145.bed -f GRCh38.d1.vd1.fa {bam_file} > {bam_rdcount_file}')
+                with open(bam_rdcount_file, 'r') as inputfile:
+                    reader = csv.reader(inputfile, delimiter='\t')
+                    for line in reader:
+                        if line[0] != chrom:
+                            continue
+                        chr = line[0]
+                        pos = line[1]
+                        ref = line[2]
+                        depth = line[3]
+                        variants = {}
+                        for item in line[4:]:
+                            fields = item.split(':')
+                            if int(fields[1]) > 0 and fields[0] != ref:
+                                variants[fields[0]] = fields[1]
+                                g.write(f'{sample}\t{chr}\t{pos}\t{ref}\t{depth}\t{fields[0]}\t{variants[fields[0]]}\n')
+                                g.flush()
                 files_to_rm = glob.glob(f'{sample}*')
                 for file in files_to_rm:
                     os.remove(file)
