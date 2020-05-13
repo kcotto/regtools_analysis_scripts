@@ -139,6 +139,8 @@ def get_sample_files(cohort, filename, gtex):
                 # get_VAF(cohort, sample, vcf_file)
                 get_junction_counts(cohort, sample, gtex)
                 get_regtools_variant_numbers(cohort, sample)
+                shutil.rmtree(sample, ignore_errors=True)
+                os.remove(f'{sample}.tar.gz')
         files_to_save = glob.glob(f'{cohort}*.tsv')
         for file in files_to_save:
             run(f'aws s3 cp {file} {results_files}/junction_counts/')
@@ -149,15 +151,15 @@ cohorts=['CHOL', 'DLBC', 'UCS', 'KICH', 'MESO', 'UVM', 'ACC', 'SKCM',
           'OV', 'KIRP', 'CESC', 'KIRC', 'LIHC', 'STAD', 'BLCA', 'COAD',
           'PRAD', 'THCA', 'LUSC', 'HNSC', 'LGG', 'LUAD', 'UCEC', 'BRCA']
 
-for cohort in cohorts:
-    gtex = create_gtex_set('master_GTEx_b38_mean_sd.tsv')
-    get_sample_files(cohort, 'primarysolidtumors_metadata.tsv', gtex)
+# for cohort in cohorts:
+#     gtex = create_gtex_set('master_GTEx_b38_mean_sd.tsv')
+#     get_sample_files(cohort, 'primarysolidtumors_metadata.tsv', gtex)
 
 
-# if __name__ == '__main__':
-#     if len(sys.argv) == 1:
-#         for cohort in cohorts:
-#             call(f'./.local/bin/pipenv run python get_summary_stats.py {cohort} &')
-#     else:
-#         gtex = create_gtex_set('master_GTEx_b38_mean_sd.tsv')
-#         get_sample_files(sys.argv[1], 'primarysolidtumors_metadata.tsv', gtex)
+if __name__ == '__main__':
+    if len(sys.argv) == 1:
+        for cohort in cohorts:
+            call(f'python3 get_summary_stats.py {cohort} &')
+    else:
+        gtex = create_gtex_set('master_GTEx_b38_mean_sd.tsv')
+        get_sample_files(sys.argv[1], 'primarysolidtumors_metadata.tsv', gtex)
