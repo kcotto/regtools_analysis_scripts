@@ -25,8 +25,10 @@ def create_gtex_set(filenname):
 
 def get_junction_counts(cohort, sample, gtex):
     output_file = f'{cohort}_novelcounts_greaterthan5.tsv'
+    output_file_gtex = f'{cohort}_novelcounts_greaterthan5_gtexfiltered.tsv'
     total_junction_output_file = f'{cohort}_totaljunctions.tsv'
-    counts = {'DA':0, 'D':0, 'A':0, 'NDA':0, 'N':0}
+    total_counts = {'DA':0, 'D':0, 'A':0, 'NDA':0, 'N':0}
+    gtex_counts = {'DA':0, 'D':0, 'A':0, 'NDA':0, 'N':0}
     annotated_bed = f'{sample}/{sample}_annotated.bed'
     write_header_junction_stats = not os.path.exists(output_file)
     if write_header_junction_stats:
@@ -34,6 +36,12 @@ def get_junction_counts(cohort, sample, gtex):
         junction_stats.write(f'Sample\tCohort\tDA\tD\tA\tNDA\tN\tTotal Unique Junctions\n')
     else:
           junction_stats = open(output_file, 'a')
+    write_header_junction_stats = not os.path.exists(output_file_gtex)
+    if write_header_junction_stats:
+        junction_stats_gtex = open(output_file_gtex, 'w')
+        junction_stats_gtex.write(f'Sample\tCohort\tDA\tD\tA\tNDA\tN\tTotal Unique Junctions\n')
+    else:
+          junction_stats_gtex = open(output_file_gtex, 'a')
     write_header_total_junction = not os.path.exists(total_junction_output_file)
     if write_header_total_junction:
         total_count = open(total_junction_output_file, 'w')
@@ -51,9 +59,13 @@ def get_junction_counts(cohort, sample, gtex):
             regtools_key = f'{chrom}_{junction_start}_{junction_end}'
             total_junction_count += score
             if regtools_key not in gtex and score >= 5:  
-                counts[line['anchor']] += 1
-        total_unique_junctions = sum(counts.values())
-        junction_stats.write(f"{sample}\t{cohort}\t{counts['DA']}\t{counts['D']}\t{counts['A']}\t{counts['NDA']}\t{counts['N']}\t{total_unique_junctions}\n")
+                gtex_counts[line['anchor']] += 1
+            if score >= 5:
+                total_counts[line['anchor']] += 1
+        total_unique_junctions_gtex = sum(gtex_counts.values())
+        total_unique_junctions = sum(total_counts.values())
+        junction_stats_gtex.write(f"{sample}\t{cohort}\t{gtex_counts['DA']}\t{gtex_counts['D']}\t{gtex_counts['A']}\t{gtex_counts['NDA']}\t{gtex_counts['N']}\t{total_unique_junctions_gtex}\n")
+        junction_stats.write(f"{sample}\t{cohort}\t{total_counts['DA']}\t{gtex_ctotal_countsounts['D']}\t{total_counts['A']}\t{total_counts['NDA']}\t{total_counts['N']}\t{total_unique_junctions}\n")
         total_count.write(f'{sample}\t{total_junction_count}\n')
         junction_stats.close()
         total_count.close()
