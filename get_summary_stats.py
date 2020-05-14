@@ -24,8 +24,8 @@ def create_gtex_set(filenname):
     return gtex
 
 def get_junction_counts(cohort, sample, gtex):
-    output_file = f'{cohort}_novelcounts_greaterthan5.tsv'
-    output_file_gtex = f'{cohort}_novelcounts_greaterthan5_gtexfiltered.tsv'
+    output_file = f'{cohort}_junctioncounts_greaterthan5.tsv'
+    output_file_gtex = f'{cohort}_junctioncounts_greaterthan5_gtexfiltered.tsv'
     total_junction_output_file = f'{cohort}_totaljunctions.tsv'
     total_counts = {'DA':0, 'D':0, 'A':0, 'NDA':0, 'N':0}
     gtex_counts = {'DA':0, 'D':0, 'A':0, 'NDA':0, 'N':0}
