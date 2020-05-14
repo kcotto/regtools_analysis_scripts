@@ -65,8 +65,8 @@ def get_junction_counts(cohort, sample, gtex):
         total_unique_junctions_gtex = sum(gtex_counts.values())
         total_unique_junctions = sum(total_counts.values())
         junction_stats_gtex.write(f"{sample}\t{cohort}\t{gtex_counts['DA']}\t{gtex_counts['D']}\t{gtex_counts['A']}\t{gtex_counts['NDA']}\t{gtex_counts['N']}\t{total_unique_junctions_gtex}\n")
-        junction_stats.write(f"{sample}\t{cohort}\t{total_counts['DA']}\t{gtex_ctotal_countsounts['D']}\t{total_counts['A']}\t{total_counts['NDA']}\t{total_counts['N']}\t{total_unique_junctions}\n")
-        total_count.write(f'{sample}\t{total_junction_count}\n')
+        junction_stats.write(f"{sample}\t{cohort}\t{total_counts['DA']}\t{total_counts['D']}\t{total_counts['A']}\t{total_counts['NDA']}\t{total_counts['N']}\t{total_unique_junctions}\n")
+        total_count.write(f'{sample}\t{cohort}\t{total_junction_count}\n')
         junction_stats.close()
         total_count.close()
 
