@@ -25,7 +25,7 @@ for cohort in cohorts:
         print(f'Running R script for {cohort}_{tag}')
         run(f'Rscript --vanilla /home/ec2-user/regtools/scripts/filter_and_BH.R {tag}')
     files_to_copy = glob.glob('compare_junctions/hist/junction_pvalues_*')
-    print(os.getcwd)
+    print(os.getcwd())
     for file in files_to_copy:
         print(file)
         run(f'aws s3 cp {file} cp s3://regtools-results-unstranded/{cohort}/compare_junctions/hist/')
