@@ -29,5 +29,7 @@ for cohort in cohorts:
     for file in files_to_copy:
         print(file)
         run(f'aws s3 cp {file} s3://regtools-results-unstranded/{cohort}/compare_junctions/hist/')
+    os.chdir('..')
+    shutil.rmtree(cohort)
     
 
