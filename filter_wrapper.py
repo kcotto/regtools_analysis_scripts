@@ -28,6 +28,6 @@ for cohort in cohorts:
     print(os.getcwd())
     for file in files_to_copy:
         print(file)
-        run(f'aws s3 cp ~/{file} cp s3://regtools-results-unstranded/{cohort}/compare_junctions/hist/')
+        run(f'aws s3 cp {file} s3://regtools-results-unstranded/{cohort}/compare_junctions/hist/')
     
 
