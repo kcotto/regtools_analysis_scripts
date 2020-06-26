@@ -8,6 +8,8 @@ import shutil
 from pathlib import Path
 import argparse
 
+### created from annotate_spliceai_gtex, modify_tsvs, variant_in_junction, and create_mutually_exclusive
+
 def create_mut_exclusive(cohort):
     default = f'{cohort}_junction_pvalues_significant_0.05_filtered_BH_default.tsv'
     i50e5 = f'{cohort}_junction_pvalues_significant_0.05_filtered_BH_i50e5.tsv'
